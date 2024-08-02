@@ -32,25 +32,16 @@ export const addTeacher = async (req  : Request, res:Response , next:NextFunctio
     const passwordHash = await bcrypt.hash(password, salt);
     try {
         const user = await new userModel({name ,password:passwordHash, email}).save();
-        console.log(user);
-        
         res.send("user create successfully ");
     } catch (error) {
         res.send("user not added please start again");
     }
-    
-
-    console.log(name);
-    
-    
 }
 
 
 export const addSubject = (req:Request , res : Response , next :NextFunction)=>{
     
     const {std , subName , topics} : reqBodySubject= req.body;
-
-    console.log("topic lsi t: ", topics);
     
     if(!std || !subName || !topics){
         res.status(400).send("enter a details perfectly");
@@ -91,7 +82,6 @@ export const addDivision = async (req: Request, res: Response, next: NextFunctio
       subjectDetail.save();
       res.status(200).send(subjectDetail);
     } catch (error:any ) {
-      
         throw new Error(error);
     }
   };  

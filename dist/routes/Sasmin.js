@@ -1,8 +1,0 @@
-import express from "express";
-import { addTeacher } from "../controllers/sadmin.js";
-import { is_auth } from "../middlewares/jwtvarify.js";
-import { addSubject } from "../controllers/sadmin.js";
-var router = express.Router();
-router.post("/addTeachers", is_auth, addTeacher);
-router.post("./addSubject", addSubject);
-export var sadminRouter = router;

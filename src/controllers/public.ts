@@ -15,7 +15,6 @@ type reqListSubjectBody = {
   div : string
 }
 
-//sign in function export
 export const sigin = async (req :Request, res:Response, next:NextFunction) => {
   const {
       email, password ,
@@ -26,28 +25,21 @@ export const sigin = async (req :Request, res:Response, next:NextFunction) => {
     return res.status(400).send("Please entre a email and password");
   }
 
-  //validate email
   if (!validateEmail(email)) {
     return res.status(400).send("Please provide valid email ");
   }
 
-  //check the user in database
 
   try {
     const user = await userModel.findOne({ email });
-    console.log(user);
     if (!user) {
-      // Handle the case where user is not found
       throw new Error('User not found');
   }
     const isPasswordCorect = bcrypt.compare(password , user.password);
-    console.log("password is correct");
     
     if (!isPasswordCorect) {
       return res.send("Invalid Password");
     }
-    console.log(process.env.SECRET_KEY as string);
-    //create the jwt tocken
     const jwtTocken = jwt.sign(
       { userId: user._id, email, role: user.role },
       process.env.SECRET_KEY as string,
@@ -78,7 +70,6 @@ export const listStdSubject  = async (req :Request, res:Response, next:NextFunct
   }
   try {
     const stdSubjectDetails = await SubjectDetails.find({std,division:div});
-    console.log(stdSubjectDetails);
     res.status(200).send(stdSubjectDetails);
   } catch (error :any ) {
     throw new Error(error);
