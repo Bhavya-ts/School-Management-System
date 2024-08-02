@@ -1,7 +1,7 @@
 import  bcrypt  from "bcrypt";
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import { userModel } from "../models/user.js";
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response} from "express";
 import {validateEmail} from "../utills/emailValidator.js";
 import {SubjectDetails} from "../models/subject.js";
 
@@ -15,7 +15,7 @@ type reqListSubjectBody = {
   div : string
 }
 
-export const sigin = async (req :Request, res:Response, next:NextFunction) => {
+export const sigin = async (req :Request, res:Response) => {
   const {
       email, password ,
   } : reqBody = req.body ;
@@ -34,6 +34,8 @@ export const sigin = async (req :Request, res:Response, next:NextFunction) => {
     const user = await userModel.findOne({ email });
     if (!user) {
       throw new Error('User not found');
+      // Handle the case where user is not found
+      throw new Error("User not found");
   }
     const isPasswordCorect = bcrypt.compare(password , user.password);
     
@@ -56,13 +58,14 @@ export const sigin = async (req :Request, res:Response, next:NextFunction) => {
       jwtTocken,
     });
   } catch (error) {
+    console.log(error);
     return res.status(501).send("Something went wrong");
   }
 };
 
 
 
-export const listStdSubject  = async (req :Request, res:Response, next:NextFunction) =>{
+export const listStdSubject  = async (req :Request, res:Response) =>{
   const {std , div} :reqListSubjectBody= req.body;
 
   if(!std || !div ){

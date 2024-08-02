@@ -40,7 +40,6 @@ const stdDetails = new mongoose.Schema({
 
     attendance: [attendanceDetials]
   });
-
 const StudentSchema = new mongoose.Schema({
   name: {
     type: String,

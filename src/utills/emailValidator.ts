@@ -1,5 +1,5 @@
 
-export const validateEmail  = (email :String) : RegExpMatchArray | null => {
+export const validateEmail  = (email :string) : RegExpMatchArray | null => {
     return String(email)
       .toLowerCase()
       .match(
