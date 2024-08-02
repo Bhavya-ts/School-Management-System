@@ -1,7 +1,7 @@
 import  bcrypt  from "bcrypt";
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import { userModel } from "../models/user.js";
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response} from "express";
 import {validateEmail} from "../utills/emailValidator.js";
 type reqBody = {
     email : string,
@@ -9,7 +9,7 @@ type reqBody = {
 }
 
 //sign in function export
-export const sigin = async (req :Request, res:Response, next:NextFunction) => {
+export const sigin = async (req :Request, res:Response) => {
   const {
       email, password ,
   } : reqBody = req.body ;
@@ -31,7 +31,7 @@ export const sigin = async (req :Request, res:Response, next:NextFunction) => {
     console.log(user);
     if (!user) {
       // Handle the case where user is not found
-      throw new Error('User not found');
+      throw new Error("User not found");
   }
     const isPasswordCorect = bcrypt.compare(password , user.password);
     console.log("password is correct");
@@ -57,6 +57,7 @@ export const sigin = async (req :Request, res:Response, next:NextFunction) => {
       jwtTocken,
     });
   } catch (error) {
+    console.log(error);
     return res.status(501).send("Something went wrong");
   }
 };

@@ -38,8 +38,8 @@ const stdDetails = new mongoose.Schema({
         required: true
     },
 
-    attendance: [attendanceDetials]
-  )},
+    attendance: [attendanceDetials],
+});
 
 const StudentSchema = new mongoose.Schema({
   name: {
