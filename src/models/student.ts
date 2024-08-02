@@ -1,8 +1,14 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
 
-const attendance_detials = new Schema({
+const bodyMeasurement = new mongoose.Schema({
+  month: String,
+  year: Number,
+  height: Number,
+  weight: Number,
+});
+
+const attendanceDetials = new mongoose.Schema({
 
     date: {
         type: Date,
@@ -15,7 +21,7 @@ const attendance_detials = new Schema({
     }
 });
 
-const stdDetails = new Schema({
+const stdDetails = new mongoose.Schema({
     
     std_detail: {
         type: Number,
@@ -32,6 +38,25 @@ const stdDetails = new Schema({
         required: true
     },
 
-    attendance: {attendance_detials}
-
+    attendance: [attendanceDetials]
 });
+
+const StudentSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  rollNo: {
+    type: String,
+  },
+  age: {
+    type: Number,
+  },
+  std_details: [stdDetails],
+  std: {
+    type: Number,
+    required: true,
+  },
+  body_measurement: [bodyMeasurement],
+});
+export const studentModel = mongoose.model("student", StudentSchema);

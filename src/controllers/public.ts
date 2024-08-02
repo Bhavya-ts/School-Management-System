@@ -3,12 +3,18 @@ import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 import { userModel } from "../models/user.js";
 import { Request, Response, NextFunction } from 'express';
 import {validateEmail} from "../utills/emailValidator.js";
+import {SubjectDetails} from "../models/subject.js";
+
 type reqBody = {
     email : string,
     password : string
 }
 
-//sign in function export
+type reqListSubjectBody = {
+  std : number,
+  div : string
+}
+
 export const sigin = async (req :Request, res:Response, next:NextFunction) => {
   const {
       email, password ,
@@ -19,28 +25,21 @@ export const sigin = async (req :Request, res:Response, next:NextFunction) => {
     return res.status(400).send("Please entre a email and password");
   }
 
-  //validate email
   if (!validateEmail(email)) {
     return res.status(400).send("Please provide valid email ");
   }
 
-  //check the user in database
 
   try {
     const user = await userModel.findOne({ email });
-    console.log(user);
     if (!user) {
-      // Handle the case where user is not found
       throw new Error('User not found');
   }
     const isPasswordCorect = bcrypt.compare(password , user.password);
-    console.log("password is correct");
     
     if (!isPasswordCorect) {
       return res.send("Invalid Password");
     }
-    console.log(process.env.SECRET_KEY as string);
-    //create the jwt tocken
     const jwtTocken = jwt.sign(
       { userId: user._id, email, role: user.role },
       process.env.SECRET_KEY as string,
@@ -63,3 +62,16 @@ export const sigin = async (req :Request, res:Response, next:NextFunction) => {
 
 
 
+export const listStdSubject  = async (req :Request, res:Response, next:NextFunction) =>{
+  const {std , div} :reqListSubjectBody= req.body;
+
+  if(!std || !div ){
+    res.status(400).send("enter a details first");
+  }
+  try {
+    const stdSubjectDetails = await SubjectDetails.find({std,division:div});
+    res.status(200).send(stdSubjectDetails);
+  } catch (error :any ) {
+    throw new Error(error);
+  }
+}
