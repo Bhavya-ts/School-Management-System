@@ -8,6 +8,10 @@ const attendance_detials = new Schema({
         type: Date,
         required: true,
         default: Date.now()
+    },
+    present: {
+        type: Boolean,
+        default: false
     }
 });
 
