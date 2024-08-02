@@ -1,7 +1,12 @@
 import express from "express";
 import {addTeacher} from "../controllers/sadmin.js";
 import { is_auth } from "../middlewares/jwtvarify.js";
+import {addSubject,addDivision} from "../controllers/sadmin.js";
+import {listStdSubject} from "../controllers/public.js";
+
 const router = express.Router();
 router.post("/addTeachers",is_auth,addTeacher );
-
+router.post("/addSubject" ,addSubject );
+router.post("/addDivision",addDivision);
+router.get("/listStdSubject",listStdSubject);
 export const sadminRouter = router;

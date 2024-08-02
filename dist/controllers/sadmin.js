@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import { validateEmail } from "../utills/emailValidator.js";
 import { userModel } from "../models/user.js";
 import bcrypt from "bcrypt";
+import { SubjectDetails, Subject } from "../models/subject.js";
 export var addTeacher = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name, email, password, salt, passwordHash, user, error_1;
     return __generator(this, function (_b) {
@@ -72,6 +73,61 @@ export var addTeacher = function (req, res, next) { return __awaiter(void 0, voi
             case 6:
                 console.log(name);
                 return [2 /*return*/];
+        }
+    });
+}); };
+export var addSubject = function (req, res, next) {
+    var _a = req.body, std = _a.std, subName = _a.subName, topics = _a.topics;
+    console.log("topic lsi t: ", topics);
+    if (!std || !subName || !topics) {
+        res.status(400).send("enter a details perfectly");
+    }
+    try {
+        var topicObjects = topics.map(function (topicName) { return ({
+            topicName: topicName
+        }); });
+        var subject = new Subject({
+            std: std,
+            subName: subName,
+            topics: topicObjects
+        });
+        subject.save();
+        res.status(200).send(subject);
+    }
+    catch (error) {
+        throw new Error(error);
+    }
+};
+export var addDivision = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, std, div, subjects, subjectDetails, subjectDetail, error_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = req.body, std = _a.std, div = _a.div;
+                // Validate input
+                if (!std || !div) {
+                    return [2 /*return*/, res.status(400).send('Please provide all required details.')];
+                }
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, Subject.find({ std: std }).exec()];
+            case 2:
+                subjects = _b.sent();
+                subjectDetails = subjects.map(function (subject) { return ({
+                    subjectName: subject.subName,
+                    topics: subject.topics.map(function (topic) { return ({
+                        topicName: topic.topicName
+                    }); })
+                }); });
+                subjectDetail = new SubjectDetails({ std: std, division: div, subjects: subjectDetails });
+                subjectDetail.save();
+                res.status(200).send(subjectDetail);
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _b.sent();
+                throw new Error(error_2);
+            case 4: return [2 /*return*/];
         }
     });
 }); };

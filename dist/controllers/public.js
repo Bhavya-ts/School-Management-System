@@ -38,6 +38,7 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import { userModel } from "../models/user.js";
 import { validateEmail } from "../utills/emailValidator.js";
+import { SubjectDetails } from "../models/subject.js";
 //sign in function export
 export var sigin = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, password, user, isPasswordCorect, jwtTocken, error_1;
@@ -82,6 +83,31 @@ export var sigin = function (req, res, next) { return __awaiter(void 0, void 0, 
             case 3:
                 error_1 = _b.sent();
                 return [2 /*return*/, res.status(501).send("Something went wrong")];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+export var listStdSubject = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, std, div, stdSubjectDetails, error_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = req.body, std = _a.std, div = _a.div;
+                if (!std || !div) {
+                    res.status(400).send("enter a details first");
+                }
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, SubjectDetails.find({ std: std, division: div })];
+            case 2:
+                stdSubjectDetails = _b.sent();
+                console.log(stdSubjectDetails);
+                res.status(200).send(stdSubjectDetails);
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _b.sent();
+                throw new Error(error_2);
             case 4: return [2 /*return*/];
         }
     });

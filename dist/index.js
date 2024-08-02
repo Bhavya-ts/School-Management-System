@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import { publicRouter } from "./routes/public.js";
 import { adminRouter } from "./routes/admin.js";
-import { sadminRouter } from "./routes/Sasmin.js";
+import { sadminRouter } from "./routes/Sadmin.js";
 dotenv.config();
 var app = express();
 mongoose

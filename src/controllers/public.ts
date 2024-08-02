@@ -3,9 +3,16 @@ import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 import { userModel } from "../models/user.js";
 import { Request, Response, NextFunction } from 'express';
 import {validateEmail} from "../utills/emailValidator.js";
+import {SubjectDetails} from "../models/subject.js";
+
 type reqBody = {
     email : string,
     password : string
+}
+
+type reqListSubjectBody = {
+  std : number,
+  div : string
 }
 
 //sign in function export
@@ -63,3 +70,17 @@ export const sigin = async (req :Request, res:Response, next:NextFunction) => {
 
 
 
+export const listStdSubject  = async (req :Request, res:Response, next:NextFunction) =>{
+  const {std , div} :reqListSubjectBody= req.body;
+
+  if(!std || !div ){
+    res.status(400).send("enter a details first");
+  }
+  try {
+    const stdSubjectDetails = await SubjectDetails.find({std,division:div});
+    console.log(stdSubjectDetails);
+    res.status(200).send(stdSubjectDetails);
+  } catch (error :any ) {
+    throw new Error(error);
+  }
+}
