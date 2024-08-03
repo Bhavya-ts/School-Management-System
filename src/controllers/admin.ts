@@ -51,9 +51,19 @@ export const listStudents = async (req: reqWithPayload, res: Response) => {
     if(!teacher){
       return res.json({status: StatusCodes.NotFound, message: "Can't find Teacher"})
     }
-    const studentList = teacher.reduce((list: <array>, ))
-    // if class and division
-    // group students based on std and division
+    const studentList = teacher.reduce((list, student) => {
+      const {std, division} = student;
+      if(!list[std]){
+        list = {};
+        res.status(StatusCodes.BadRequest).json({message: "Class doesn't exist"});
+      }
+      if(!list[std][division]){
+        list = {};
+        res.status(StatusCodes.BadRequest).json({message: "Division doesn't exist"});
+      }
+      list[std][division].push(student);
+      res.status(StatusCodes.OK).json({message:"Student list",data:list,});
+    }, {});
 
     res.json({ status: StatusCodes.OK, message: "Student list" });
 }
