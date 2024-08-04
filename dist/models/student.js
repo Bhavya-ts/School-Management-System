@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-var bodyMeasurement = new mongoose.Schema({
+const bodyMeasurement = new mongoose.Schema({
     month: String,
     year: Number,
     height: Number,
     weight: Number,
 });
-var attendanceDetials = new mongoose.Schema({
+const attendanceDetials = new mongoose.Schema({
     date: {
         type: Date,
         required: true,
@@ -16,7 +16,7 @@ var attendanceDetials = new mongoose.Schema({
         default: false
     }
 });
-var stdDetails = new mongoose.Schema({
+const stdDetails = new mongoose.Schema({
     std_detail: {
         type: Number,
         required: true
@@ -31,7 +31,7 @@ var stdDetails = new mongoose.Schema({
     },
     attendance: [attendanceDetials]
 });
-var StudentSchema = new mongoose.Schema({
+const StudentSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -49,4 +49,4 @@ var StudentSchema = new mongoose.Schema({
     },
     body_measurement: [bodyMeasurement],
 });
-export var studentModel = mongoose.model("student", StudentSchema);
+export const studentModel = mongoose.model("student", StudentSchema);
