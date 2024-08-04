@@ -98,7 +98,6 @@ export const addAttendance = async (req:Request , res:Response , next:NextFuncti
   const year = new Date().getFullYear();
 
 
-  // const year = ne
 
   if(!std || !div || !studentIdsAbsent){
     res.send(StatusCodes.BadRequest).send("Please provide a valid data...");
