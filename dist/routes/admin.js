@@ -1,5 +1,5 @@
 import express from "express";
-import { addStudent, addBodyMeasurement, addAttendance } from "../controllers/admin.js";
+import { addStudent, addBodyMeasurement, addAttendance, editTopicStatus } from "../controllers/admin.js";
 import { is_auth } from "../middlewares/jwtvarify.js";
 import { listStdSubject } from "../controllers/public.js";
 const router = express.Router();
@@ -7,5 +7,6 @@ router.post("/addStudent", addStudent);
 router.get("/listStdSubject", listStdSubject);
 router.post("/addBodyMeasurement", is_auth, addBodyMeasurement);
 router.post("/addAttendance", is_auth, addAttendance);
+router.post("/editTopicStatus", is_auth, editTopicStatus);
 // router.post("");
 export const adminRouter = router;

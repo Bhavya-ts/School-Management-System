@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { studentModel } from "../models/student.js";
 import { StatusCodes } from "../enums.js";
+import {SubjectDetails} from "../models/subject.js";
 import { attendanceModel } from "../models/attendance.js";
 
 import { Subject } from "../models/subject.js";
@@ -25,6 +26,13 @@ interface BodyMeasurement {
   weight: number;
 }
 
+type reqBodyEditTopic= {
+  std : number; 
+  div:string;  
+  subjectId:string; 
+  topicID:string ;
+  status:number
+};
 export const addStudent = (req: Request, res: Response) => {
   const { name, std, division }: reqBodyStudent = req.body;
   if (!name) {
@@ -49,13 +57,13 @@ export const addBodyMeasurement = async(req: Request, res:Response, next:NextFun
   const {studentId , month , year , height , weight} : reqBodyOtherDetail =req.body; 
 
   if(!studentId || !month || !year || !height || !weight){
-    res.status(StatusCodes.BadRequest).send("enter a proper details ");
+    return res.status(StatusCodes.BadRequest).send("enter a proper details ");
   }
 
   try {
       const student  = await studentModel.findOne({_id:studentId}) ;
       if(!student){
-        res.send(StatusCodes["InternalServerError"]).send("user not found");
+        return res.send(StatusCodes["InternalServerError"]).send("user not found");
       }
       console.log(student);
       
@@ -67,12 +75,12 @@ export const addBodyMeasurement = async(req: Request, res:Response, next:NextFun
 
       await student?.save();
       console.log(BodyMeasurement);
-      res.send(student);
+      return res.send(student);
       
 
   } catch (error) {
     console.log(error);
-    res.status(StatusCodes.InternalServerError).send("Error!......");
+    return res.status(StatusCodes.InternalServerError).send("Error!......");
   }
 }
 
@@ -86,14 +94,14 @@ export const addAttendance = async (req:Request , res:Response , next:NextFuncti
 
 
   if(!std || !div || !studentIdsAbsent){
-    res.send(StatusCodes.BadRequest).send("Please provide a valid data...");
+    return res.send(StatusCodes.BadRequest).send("Please provide a valid data...");
   }
 
   
   try {
     const attendanceDoc  = await attendanceModel.findOne({std,div,year});
     if(!attendanceDoc){
-      res.status(StatusCodes.BadRequest).send("class not found");
+      return res.status(StatusCodes.BadRequest).send("class not found");
     }
     
     attendanceDoc?.attendanceRecords.forEach(record => {
@@ -108,11 +116,47 @@ export const addAttendance = async (req:Request , res:Response , next:NextFuncti
       }
     });
     await attendanceDoc?.save();
-    res.status(StatusCodes.OK).send("Attendance update successfully...");
+    return res.status(StatusCodes.OK).send("Attendance update successfully...");
 
     
   } catch (error) {
-    res.status(StatusCodes.InternalServerError).send('Error updating attendance.');
+    return res.status(StatusCodes.InternalServerError).send('Error updating attendance.');
   }
-   
+
+}
+
+export const editTopicStatus = async (req:Request , res:Response , next:NextFunction) => {
+  const {std , div,  subjectId ,topicID, status} :reqBodyEditTopic= req.body;
+
+  if(!std || !div || !subjectId || !topicID || !status){
+    return res.send(StatusCodes.BadRequest).send("Please provide a valid data...");
+  }
+
+  try {
+    const subjectDoc = await SubjectDetails.findOne({std,division:div,});
+    if(!subjectDoc){
+      return res.status(StatusCodes.BadRequest).send("Not found perticular class into database.....");
+    }
+
+    const subject = subjectDoc?.subjects.find(data => data.subjectId === subjectId);
+    if(!subject){
+      return res.send(StatusCodes.InternalServerError).send("subject not found...");
+    }
+    console.log("subject",subject.topics);
+    const topic = subject?.topics.find(data=> data.topicId === topicID);
+    if(!topic){
+      return res.status(StatusCodes.BadRequest).send("Not found perticular topic into database.....");
+    }
+    topic!.completed = status;
+
+    console.log(topic)
+    
+    
+    await subjectDoc?.save();
+    return res.status(StatusCodes.OK).send("topic status update successfully...");
+    
+  } catch (error) {
+    return res.status(StatusCodes.InternalServerError).send('Error updating status of topic....');
+  }
+
 }

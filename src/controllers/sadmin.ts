@@ -83,15 +83,15 @@ export const addDivision = async (req: Request, res: Response, next: NextFunctio
       const subjects = await Subject.find({ std }).exec();
       
       const subjectDetails = subjects.map(subject => ({
-        subjectName: subject.subName,
+        subjectId: subject._id,
         topics: subject.topics.map(topic => ({
-            topicName: topic.topicName
+            topicId: topic._id
         }))
       }));
   
       const subjectDetail = new SubjectDetails({ std, division: div, subjects: subjectDetails });
       subjectDetail.save();
-      res.status(200).send(subjectDetail);
+      return res.status(200).send(subjectDetail);
     } catch (error:any ) {
         throw new Error(error);
     }
@@ -101,27 +101,27 @@ export const addDivision = async (req: Request, res: Response, next: NextFunctio
     const {teacherId, std , div } :subjectAssignment = req.body;
     
     if(!teacherId || !std || !div ) {
-      res.status(StatusCodes.BadRequest).send("Provide a proper data first");
+      return res.status(StatusCodes.BadRequest).send("Provide a proper data first");
     }
   
     try {
     const alreadyAssigned = await teacherModel.findOne({classTeacherDiv:div , classTeacherStd : std});
         if(alreadyAssigned){
-            res.status(StatusCodes.InternalServerError).send("Already assigned this std and div.....")
+          return res.status(StatusCodes.InternalServerError).send("Already assigned this std and div.....")
         }
       const teacherDoc = await teacherModel.findOne({techerId:teacherId});
 
       if(!teacherDoc){
-        res.status(StatusCodes.InternalServerError).send("Teacher with this Id not found .....");
+        return res.status(StatusCodes.InternalServerError).send("Teacher with this Id not found .....");
       }
     teacherDoc!.classTeacherStd = std;
     teacherDoc!.classTeacherDiv = div;
 
     await teacherDoc?.save();
 
-    res.status(StatusCodes.OK).send("class assigned successfully....");
+    return res.status(StatusCodes.OK).send("class assigned successfully....");
     } catch (error) {
-      res.status(StatusCodes.InternalServerError).send('Error assiging class to teacher....');
+      return res.status(StatusCodes.InternalServerError).send('Error assiging class to teacher....');
     }
   };
 
@@ -129,23 +129,23 @@ export const addDivision = async (req: Request, res: Response, next: NextFunctio
     const {teacherId, std , div , subjectId} :subjectAssignment = req.body;
     
     if(!teacherId || !std || !div ||!subjectId) {
-      res.status(StatusCodes.BadRequest).send("Provide a proper data first");
+      return res.status(StatusCodes.BadRequest).send("Provide a proper data first");
     }
   
     try {
       const teacherDoc = await teacherModel.findOne({techerId:teacherId});
       
       if(!teacherDoc){
-        res.status(StatusCodes.InternalServerError).send("Teacher with this Id not found .....")
+        return res.status(StatusCodes.InternalServerError).send("Teacher with this Id not found .....")
       }
      const subject = teacherDoc?.assignedSubject.find(data => data.subjectId === subjectId && data.std === std && data.div === div);
   
      if(!subject){
       teacherDoc?.assignedSubject.push({std,div,subjectId});
       await teacherDoc?.save();
-      res.status(StatusCodes.OK).send("class assigned successfully....");
+      return res.status(StatusCodes.OK).send("class assigned successfully....");
      }
     } catch (error) {
-      res.status(StatusCodes.InternalServerError).send('Error assiging subject to teacher....');
+      return res.status(StatusCodes.InternalServerError).send('Error assiging subject to teacher....');
     }
   }
