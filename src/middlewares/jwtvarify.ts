@@ -2,9 +2,10 @@
 // import jwt from "jsonwebtoken";
 // import {  JwtPayload} from "../types/express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { Request, Response, NextFunction } from "express";
+import {Request, Response, NextFunction } from "express";
+import {reqWithPayload} from "../types/express.js"
 
-export const is_auth = (req :Request, res:Response, next:NextFunction) => {
+export const is_auth = (req :reqWithPayload, res:Response, next:NextFunction) : Response<any, Record<string, any>> | undefined=> {
   const authorization = req.get("authorization");
   console.log(authorization);
   if (!authorization) {

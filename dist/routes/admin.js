@@ -1,7 +1,11 @@
 import express from "express";
-import { addStudent } from "../controllers/admin.js";
+import { addStudent, addAttendance, addBodyMeasurement } from "../controllers/admin.js";
 import { is_auth } from "../middlewares/jwtvarify.js";
-var router = express.Router();
-router.post("./addStudent", is_auth, addStudent);
+import { listStdSubject } from "../controllers/public.js";
+const router = express.Router();
+router.post("/addStudent", addStudent);
+router.get("/listStdSubject", listStdSubject);
+router.post("/addBodyMeasurement", is_auth, addBodyMeasurement);
+router.post("/addAttendance", is_auth, addAttendance);
 // router.post("");
-export var adminRouter = router;
+export const adminRouter = router;

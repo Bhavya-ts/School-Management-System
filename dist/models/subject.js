@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 // Schema for topics
-var topicSchema = new Schema({
+const topicSchema = new Schema({
     topicName: {
         type: String,
         required: true
     }
 });
 // Schema for subjects
-var subjectSchema = new Schema({
+const subjectSchema = new Schema({
     std: {
         type: Number,
         required: true
@@ -20,7 +20,7 @@ var subjectSchema = new Schema({
     topics: [topicSchema] // Embedding topics schema here
 });
 // Schema for student details and their subject progress
-var SubjectDetailsSchema = new Schema({
+const SubjectDetailsSchema = new Schema({
     //   studentId: {
     //     type: Schema.Types.ObjectId,
     //     ref: 'Student',  // Assuming you have a Student model
@@ -53,6 +53,6 @@ var SubjectDetailsSchema = new Schema({
                 }]
         }]
 });
-var Subject = mongoose.model('Subject', subjectSchema);
-var SubjectDetails = mongoose.model('StudentSubjectDetails', SubjectDetailsSchema);
+const Subject = mongoose.model('Subject', subjectSchema);
+const SubjectDetails = mongoose.model('StudentSubjectDetails', SubjectDetailsSchema);
 export { Subject, SubjectDetails };
