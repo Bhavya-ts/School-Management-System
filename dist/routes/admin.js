@@ -1,5 +1,5 @@
 import express from "express";
-import { addStudent, addAttendance, addBodyMeasurement } from "../controllers/admin.js";
+import { addStudent, addBodyMeasurement, addAttendance } from "../controllers/admin.js";
 import { is_auth } from "../middlewares/jwtvarify.js";
 import { listStdSubject } from "../controllers/public.js";
 const router = express.Router();

@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { studentModel } from "../models/student.js";
 import { StatusCodes } from "../enums.js";
-import { Document, Schema, model } from 'mongoose';
 import { attendanceModel } from "../models/attendance.js";
+
+import { Subject } from "../models/subject.js";
 type reqBodyStudent = {
   name: string;
   age: number;
@@ -22,21 +23,6 @@ interface BodyMeasurement {
   year: number;
   height: number;
   weight: number;
-}
-
-
-// Define the structure of the attendance record
-type  AttendanceRecord  = {
-  Date?: Date;
-  studentList?: { studentId?: string; present?: number }[];
-}
-
-// Define the schema structure
-type AttendanceDocument ={
-  class?: number;
-  div?: string;
-  year?: number;
-  attendance?: AttendanceRecord[];
 }
 
 export const addStudent = (req: Request, res: Response) => {

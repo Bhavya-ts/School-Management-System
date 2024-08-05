@@ -5,32 +5,32 @@ const bodyMeasurement = new mongoose.Schema({
     height: Number,
     weight: Number,
 });
-const attendanceDetials = new mongoose.Schema({
-    date: {
-        type: Date,
-        required: true,
-        default: Date.now()
-    },
-    present: {
-        type: Boolean,
-        default: false
-    }
-});
-const stdDetails = new mongoose.Schema({
-    std_detail: {
-        type: Number,
-        required: true
-    },
-    division: {
-        type: String,
-        required: true
-    },
-    class_teacher: {
-        type: String,
-        required: true
-    },
-    attendance: [attendanceDetials]
-});
+// const attendanceDetials = new mongoose.Schema({
+//     date: {
+//         type: Date,
+//         required: true,
+//         default: Date.now()
+//     },
+//     present: {
+//         type: Boolean,
+//         default: false
+//     }
+// });
+// const stdDetails = new mongoose.Schema({
+//     std_detail: {
+//         type: Number,
+//         required: true
+//     },
+//     division :{
+//         type: String,
+//         required: true
+//     },
+//     class_teacher: {
+//         type: String,
+//         required: true
+//     },
+//     attendance: [attendanceDetials]
+//   });
 const StudentSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -42,7 +42,7 @@ const StudentSchema = new mongoose.Schema({
     age: {
         type: Number,
     },
-    std_details: [stdDetails],
+    // std_details: [stdDetails],
     std: {
         type: Number,
         required: true,

@@ -1,5 +1,6 @@
 import { studentModel } from "../models/student.js";
 import { StatusCodes } from "../enums.js";
+import { attendanceModel } from "../models/attendance.js";
 export const addStudent = (req, res) => {
     const { name, std, division } = req.body;
     if (!name) {
@@ -43,13 +44,34 @@ export const addBodyMeasurement = async (req, res, next) => {
         res.status(StatusCodes.InternalServerError).send("Error!......");
     }
 };
-export const addAttendance = (req, res, next) => {
-    const { std, div, PresentStudentIds } = req.body;
+//attendance update 
+export const addAttendance = async (req, res, next) => {
+    const { std, div, studentIdsAbsent } = req.body;
     const date = new Date().toLocaleDateString();
     const year = new Date().getFullYear();
-    // const year = ne
-    if (!std || !div || !PresentStudentIds) {
+    if (!std || !div || !studentIdsAbsent) {
         res.send(StatusCodes.BadRequest).send("Please provide a valid data...");
     }
-    console.log("current date is : ", date);
+    try {
+        const attendanceDoc = await attendanceModel.findOne({ std, div, year });
+        if (!attendanceDoc) {
+            res.status(StatusCodes.BadRequest).send("class not found");
+        }
+        attendanceDoc === null || attendanceDoc === void 0 ? void 0 : attendanceDoc.attendanceRecords.forEach(record => {
+            const isStudentAbsent = studentIdsAbsent.includes(record.studentId);
+            const datewiseEntry = record.datewiseList.find(entry => entry.date === date);
+            if (datewiseEntry) {
+                datewiseEntry.present = isStudentAbsent ? 0 : 1;
+            }
+            else {
+                // Add new datewise entry
+                record.datewiseList.push({ date, present: isStudentAbsent ? 0 : 1 });
+            }
+        });
+        await (attendanceDoc === null || attendanceDoc === void 0 ? void 0 : attendanceDoc.save());
+        res.status(StatusCodes.OK).send("Attendance update successfully...");
+    }
+    catch (error) {
+        res.status(StatusCodes.InternalServerError).send('Error updating attendance.');
+    }
 };

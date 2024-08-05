@@ -1,24 +1,41 @@
 import mongoose from "mongoose";
+import { Subject } from "./subject";
 
 const Schema = mongoose.Schema;
-
+const assignSubejct = new Schema({
+    std:{
+        type:Number,
+        require:true,
+    },
+    div:{
+        type : String,
+        require:true
+    },
+    subjectId :{
+        type: String,
+        require : true
+    }
+});
 const teacherSchema = new Schema({
-    
-    name: {
-        type: String,
-        required: true,
+    techerId:{
+        type:String,
+        require:true
     },
+    // name: {
+    //     type: String,
+    //     required: true,
+    // },
 
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
+    // email: {
+    //     type: String,
+    //     required: true,
+    //     unique: true
+    // },
     
-    password: {
-        type: String,
-        required: true,
-    },
+    // password: {
+    //     type: String,
+    //     required: true,
+    // },
 
     classTeacherStd: {
         type: Number
@@ -28,7 +45,7 @@ const teacherSchema = new Schema({
         type: String
     },
 
-    subject: [],
+    assignedSubject: [assignSubejct],
 });
 
 export const teacherModel = mongoose.model("teacher", teacherSchema);
