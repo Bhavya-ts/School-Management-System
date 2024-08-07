@@ -39,19 +39,19 @@ const SubjectDetailsSchema = new Schema({
     required: true
   },
   subjects: [{
-    subjectName: {
+    subjectId: {
       type: String,
       ref: 'Subject',  // Referring to the Subject model
       required: true
     },
     topics: [{
-      topicName: {
+      topicId: {
         type: String,
         ref: 'Topic',  // Referring to the Topic model
         required: true
       },
       completed: {
-        type: Boolean,
+        type: Number,
         default: false
       }
     }]

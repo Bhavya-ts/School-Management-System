@@ -1,5 +1,7 @@
 import { studentModel } from "../models/student.js";
 import { StatusCodes } from "../enums.js";
+import { SubjectDetails } from "../models/subject.js";
+import { attendanceModel } from "../models/attendance.js";
 export const addStudent = (req, res) => {
     const { name, std, division } = req.body;
     if (!name) {
@@ -22,12 +24,12 @@ export const addStudent = (req, res) => {
 export const addBodyMeasurement = async (req, res, next) => {
     const { studentId, month, year, height, weight } = req.body;
     if (!studentId || !month || !year || !height || !weight) {
-        res.status(StatusCodes.BadRequest).send("enter a proper details ");
+        return res.status(StatusCodes.BadRequest).send("enter a proper details ");
     }
     try {
         const student = await studentModel.findOne({ _id: studentId });
         if (!student) {
-            res.send(StatusCodes["InternalServerError"]).send("user not found");
+            return res.send(StatusCodes["InternalServerError"]).send("user not found");
         }
         console.log(student);
         const BodyMeasurement = {
@@ -36,20 +38,69 @@ export const addBodyMeasurement = async (req, res, next) => {
         student === null || student === void 0 ? void 0 : student.body_measurement.push(BodyMeasurement);
         await (student === null || student === void 0 ? void 0 : student.save());
         console.log(BodyMeasurement);
-        res.send(student);
+        return res.send(student);
     }
     catch (error) {
         console.log(error);
-        res.status(StatusCodes.InternalServerError).send("Error!......");
+        return res.status(StatusCodes.InternalServerError).send("Error!......");
     }
 };
-export const addAttendance = (req, res, next) => {
-    const { std, div, PresentStudentIds } = req.body;
+//attendance update 
+export const addAttendance = async (req, res, next) => {
+    const { std, div, studentIdsAbsent } = req.body;
     const date = new Date().toLocaleDateString();
     const year = new Date().getFullYear();
-    // const year = ne
-    if (!std || !div || !PresentStudentIds) {
-        res.send(StatusCodes.BadRequest).send("Please provide a valid data...");
+    if (!std || !div || !studentIdsAbsent) {
+        return res.send(StatusCodes.BadRequest).send("Please provide a valid data...");
     }
-    console.log("current date is : ", date);
+    try {
+        const attendanceDoc = await attendanceModel.findOne({ std, div, year });
+        if (!attendanceDoc) {
+            return res.status(StatusCodes.BadRequest).send("class not found");
+        }
+        attendanceDoc === null || attendanceDoc === void 0 ? void 0 : attendanceDoc.attendanceRecords.forEach(record => {
+            const isStudentAbsent = studentIdsAbsent.includes(record.studentId);
+            const datewiseEntry = record.datewiseList.find(entry => entry.date === date);
+            if (datewiseEntry) {
+                datewiseEntry.present = isStudentAbsent ? 0 : 1;
+            }
+            else {
+                // Add new datewise entry
+                record.datewiseList.push({ date, present: isStudentAbsent ? 0 : 1 });
+            }
+        });
+        await (attendanceDoc === null || attendanceDoc === void 0 ? void 0 : attendanceDoc.save());
+        return res.status(StatusCodes.OK).send("Attendance update successfully...");
+    }
+    catch (error) {
+        return res.status(StatusCodes.InternalServerError).send('Error updating attendance.');
+    }
+};
+export const editTopicStatus = async (req, res, next) => {
+    const { std, div, subjectId, topicID, status } = req.body;
+    if (!std || !div || !subjectId || !topicID || !status) {
+        return res.send(StatusCodes.BadRequest).send("Please provide a valid data...");
+    }
+    try {
+        const subjectDoc = await SubjectDetails.findOne({ std, division: div, });
+        if (!subjectDoc) {
+            return res.status(StatusCodes.BadRequest).send("Not found perticular class into database.....");
+        }
+        const subject = subjectDoc === null || subjectDoc === void 0 ? void 0 : subjectDoc.subjects.find(data => data.subjectId === subjectId);
+        if (!subject) {
+            return res.send(StatusCodes.InternalServerError).send("subject not found...");
+        }
+        console.log("subject", subject.topics);
+        const topic = subject === null || subject === void 0 ? void 0 : subject.topics.find(data => data.topicId === topicID);
+        if (!topic) {
+            return res.status(StatusCodes.BadRequest).send("Not found perticular topic into database.....");
+        }
+        topic.completed = status;
+        console.log(topic);
+        await (subjectDoc === null || subjectDoc === void 0 ? void 0 : subjectDoc.save());
+        return res.status(StatusCodes.OK).send("topic status update successfully...");
+    }
+    catch (error) {
+        return res.status(StatusCodes.InternalServerError).send('Error updating status of topic....');
+    }
 };
